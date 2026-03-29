@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Job Details</title>
+
+<style>
+.navbar {
+  background:#0a66c2;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+}
+.logo { height:40px; }
+.navbar a { color:white; margin-left:15px; }
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+  <div>
+    <a href="jobs.html">Jobs</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<h2>Job Details</h2>
+
+<div id="job"></div>
+
+<button onclick="apply()">Apply</button>
+<button onclick="save()">Save</button>
+
+<script>
+
+const jobId = localStorage.getItem("jobId");
+const email = localStorage.getItem("email");
+
+async function load(){
+  const res = await fetch("http://localhost:5000/api/jobs");
+  const jobs = await res.json();
+
+  const job = jobs.find(j => j._id === jobId);
+
+  document.getElementById("job").innerHTML = `
+    <h3>${job.title}</h3>
+    <p>${job.company}</p>
+    <p>${job.location}</p>
+    <p>${job.salary}</p>
+    <p>${job.description}</p>
+    <p><b>Skills:</b> ${job.skills.join(", ")}</p>
+  `;
+}
+
+async function apply(){
+  await fetch(`http://localhost:5000/api/jobs/apply/${jobId}`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ email })
+  });
+  alert("Applied");
+}
+
+async function save(){
+  await fetch(`http://localhost:5000/api/jobs/save/${jobId}`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ email })
+  });
+  alert("Saved");
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
+}
+
+load();
+
+</script>
+
+</body>
+</html>

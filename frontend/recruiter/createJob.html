@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Job</title>
+
+<style>
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f6f8;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+}
+
+.nav-links a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: black;
+}
+
+.container {
+  width: 400px;
+  margin: auto;
+  margin-top: 40px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #0a66c2;
+  color: white;
+  border: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+  <div class="nav-left">
+    <img src="../images/logo.png" class="logo">
+  </div>
+
+  <div class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="myjobs.html">My Jobs</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+</div>
+
+<div class="container">
+
+<h2>Create Job</h2>
+
+<input id="title" placeholder="Title">
+<input id="company" placeholder="Company">
+<input id="location" placeholder="Location">
+<input id="salary" placeholder="Salary">
+<input id="type" placeholder="Type">
+<input id="logo" placeholder="Logo (images/logo.png)">
+<input id="skills" placeholder="Skills (comma separated)">
+<textarea id="description" placeholder="Description"></textarea>
+
+<button onclick="createJob()">Create</button>
+
+</div>
+
+<script>
+
+async function createJob(){
+
+  const email = localStorage.getItem("email");
+
+  const skills = document.getElementById("skills").value
+    .split(",")
+    .map(s => s.trim().toLowerCase());
+
+  const job = {
+    title: document.getElementById("title").value,
+    company: document.getElementById("company").value,
+    location: document.getElementById("location").value,
+    salary: document.getElementById("salary").value,
+    type: document.getElementById("type").value,
+    description: document.getElementById("description").value,
+    logo: document.getElementById("logo").value,
+    createdBy: email,
+    skills: skills
+  };
+
+  const res = await fetch("http://localhost:5000/api/jobs/create", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(job)
+  });
+
+  const data = await res.json();
+
+  alert(data.message);
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

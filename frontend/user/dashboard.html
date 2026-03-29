@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Dashboard</title>
+
+<style>
+
+/* 🔥 FIRE ANIMATED BACKGROUND */
+body {
+  margin: 0;
+  font-family: Arial;
+  height: 100vh;
+
+  background: linear-gradient(-45deg, #ff512f, #dd2476, #ff512f, #ff9966);
+  background-size: 400% 400%;
+  animation: fireBG 8s ease infinite;
+}
+
+@keyframes fireBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
+}
+
+.logo {
+  height: 40px;
+}
+
+.navbar button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* MAIN */
+.container {
+  text-align: center;
+  margin-top: 80px;
+  color: white;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 200px);
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  padding: 25px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  background: rgba(255,255,255,0.2);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+  <button onclick="logout()">Logout</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container">
+
+<h2>User Dashboard</h2>
+
+<div class="grid">
+
+  <div class="card" onclick="goJobs()">
+    <h3>Jobs</h3>
+    <p>Browse all jobs</p>
+  </div>
+
+  <div class="card" onclick="goSaved()">
+    <h3>Saved Jobs</h3>
+    <p>Your saved jobs</p>
+  </div>
+
+  <div class="card" onclick="goApplied()">
+    <h3>Applied Jobs</h3>
+    <p>Track applications</p>
+  </div>
+
+  <div class="card" onclick="goAI()">
+    <h3>AI Jobs</h3>
+    <p>Smart recommendations</p>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+// 🔥 AUTH CHECK (UNCHANGED)
+const email = localStorage.getItem("email");
+const role = localStorage.getItem("role");
+
+if (!email || role !== "user") {
+  alert("Login required");
+  window.location.href = "login.html";
+}
+
+// NAVIGATION (UNCHANGED)
+function goJobs(){
+  window.location.href = "jobs.html";
+}
+
+function goSaved(){
+  window.location.href = "savedJobs.html";
+}
+
+function goApplied(){
+  window.location.href = "appliedJobs.html";
+}
+
+function goAI(){
+  window.location.href = "aiJobs.html";
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

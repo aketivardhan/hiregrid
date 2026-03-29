@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Jobs</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f6f8;
+}
+
+.navbar {
+  background: #0a66c2;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  height: 40px;
+}
+
+.navbar a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+}
+
+.container {
+  padding: 20px;
+}
+
+input {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  background: #0a66c2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.card {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  background: white;
+  margin-top: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.logo-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.content {
+  flex: 1;
+}
+
+.skill {
+  display: inline-block;
+  background: #e0ecff;
+  padding: 4px 8px;
+  margin: 2px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+  <div>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="savedJobs.html">Saved</a>
+    <a href="appliedJobs.html">Applied</a>
+    <a href="aiJobs.html">AI Jobs</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+
+<h2>Jobs</h2>
+
+<input id="keyword" placeholder="Search title">
+<input id="location" placeholder="Location">
+<button onclick="searchJobs()">Search</button>
+
+<div id="jobs"></div>
+
+</div>
+
+<script>
+
+const email = localStorage.getItem("email");
+if (!email) window.location.href = "login.html";
+
+async function loadJobs(){
+  const res = await fetch("http://localhost:5000/api/jobs");
+  const jobs = await res.json();
+  displayJobs(jobs);
+}
+
+async function searchJobs(){
+  const keyword = document.getElementById("keyword").value;
+  const location = document.getElementById("location").value;
+
+  const res = await fetch(`http://localhost:5000/api/jobs/search?keyword=${keyword}&location=${location}`);
+  const jobs = await res.json();
+
+  displayJobs(jobs);
+}
+
+function displayJobs(jobs){
+  const container = document.getElementById("jobs");
+
+  if (jobs.length === 0){
+    container.innerHTML = "No jobs found";
+    return;
+  }
+
+  container.innerHTML = jobs.map(job => {
+    const skills = job.skills?.map(s => `<span class="skill">${s}</span>`).join("") || "";
+
+    return `
+      <div class="card">
+        <img class="logo-img" src="../${job.logo}" onerror="this.src='../images/default.png'">
+
+        <div class="content">
+          <h3>${job.title}</h3>
+          <p><b>${job.company}</b></p>
+          <p>${job.location}</p>
+          <p>${job.salary}</p>
+          <div>${skills}</div>
+
+          <button onclick="viewJob('${job._id}')">View</button>
+          <button onclick="saveJob('${job._id}')">Save</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function saveJob(id){
+  await fetch(`http://localhost:5000/api/jobs/save/${id}`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ email })
+  });
+  alert("Saved");
+}
+
+function viewJob(id){
+  localStorage.setItem("jobId", id);
+  window.location.href = "jobDetails.html";
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+loadJobs();
+
+</script>
+
+</body>
+</html>

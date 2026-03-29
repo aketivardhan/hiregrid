@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Jobs</title>
+
+<style>
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f6f8;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+}
+
+.nav-links a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: black;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+button {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  background: #0a66c2;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+  <div class="nav-left">
+    <img src="../images/logo.png" class="logo">
+  </div>
+
+  <div class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="myjobs.html">My Jobs</a>
+    <a href="createJob.html">Create</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+</div>
+
+<div class="container">
+
+<h2>My Jobs</h2>
+
+<div id="jobs"></div>
+
+</div>
+
+<script>
+
+const email = localStorage.getItem("email");
+
+if (!email) {
+  alert("Login required");
+  window.location.href = "login.html";
+}
+
+async function loadJobs(){
+
+  const res = await fetch(`http://localhost:5000/api/jobs/my-jobs/${email}`);
+  const jobs = await res.json();
+
+  const container = document.getElementById("jobs");
+
+  if (jobs.length === 0){
+    container.innerHTML = "<p>No jobs found</p>";
+    return;
+  }
+
+  container.innerHTML = jobs.map(job => `
+    <div class="card">
+
+      <h3>${job.title}</h3>
+      <p><b>${job.company}</b></p>
+      <p>${job.location}</p>
+
+      <button onclick="editJob('${job._id}')">Edit</button>
+      <button onclick="deleteJob('${job._id}')">Delete</button>
+      <button onclick="viewApplicants('${job._id}')">Applicants</button>
+
+    </div>
+  `).join("");
+}
+
+async function deleteJob(id){
+
+  if (!confirm("Delete this job?")) return;
+
+  await fetch(`http://localhost:5000/api/jobs/delete/${id}`, {
+    method: "DELETE"
+  });
+
+  alert("Deleted");
+  loadJobs();
+}
+
+async function editJob(id){
+
+  const newTitle = prompt("Enter new title:");
+  const newCompany = prompt("Enter new company:");
+
+  if (!newTitle || !newCompany) return;
+
+  await fetch(`http://localhost:5000/api/jobs/update/${id}`, {
+    method: "PUT",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      title: newTitle,
+      company: newCompany
+    })
+  });
+
+  alert("Updated");
+  loadJobs();
+}
+
+function viewApplicants(id){
+  window.location.href = `applicants.html?id=${id}`;
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+loadJobs();
+
+</script>
+
+</body>
+</html>

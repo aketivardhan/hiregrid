@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+
+<style>
+
+/* ===== FIRE BACKGROUND ===== */
+body {
+  margin: 0;
+  font-family: Arial;
+  height: 100vh;
+  overflow: hidden;
+
+  background: linear-gradient(-45deg, #ff512f, #dd2476, #ff512f, #ff9966);
+  background-size: 400% 400%;
+  animation: fireBG 8s ease infinite;
+}
+
+@keyframes fireBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
+}
+
+.logo {
+  height: 40px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* ===== DASHBOARD GRID ===== */
+.container {
+  padding: 40px;
+  color: white;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* GRID LAYOUT */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  background: rgba(255,255,255,0.2);
+}
+
+/* TITLE */
+.card h3 {
+  margin-bottom: 10px;
+}
+
+/* BUTTON STYLE */
+.card a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+  <a href="#" onclick="logout()">Logout</a>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container">
+
+<h2>Recruiter Dashboard</h2>
+
+<div class="grid">
+
+  <!-- MY JOBS -->
+  <div class="card">
+    <h3>My Jobs</h3>
+    <p>View and manage your posted jobs</p>
+    <a href="myjobs.html">Open</a>
+  </div>
+
+  <!-- CREATE JOB -->
+  <div class="card">
+    <h3>Create Job</h3>
+    <p>Post a new job opportunity</p>
+    <a href="createJob.html">Create</a>
+  </div>
+
+  <!-- APPLICANTS -->
+  <div class="card">
+    <h3>Applicants</h3>
+    <p>View job applicants</p>
+    <a href="myjobs.html">View Applicants</a>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
+}
+</script>
+
+</body>
+</html>

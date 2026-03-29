@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Jobs</title>
+
+<style>
+body { margin:0; font-family:Arial; background:#0a0a15; color:white; }
+
+.navbar {
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  background:#000;
+}
+
+.logo { height:40px; }
+
+.navbar a { color:white; margin-left:15px; }
+
+.container { padding:20px; }
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+  <div>
+    <a href="jobs.html">Jobs</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+
+<h2>AI Jobs</h2>
+
+<input id="skills">
+<button onclick="getAIJobs()">Find</button>
+
+<div id="jobs"></div>
+
+</div>
+
+<script>
+
+const email = localStorage.getItem("email");
+if (!email) window.location.href="login.html";
+
+async function getAIJobs(){
+
+  const skills = document.getElementById("skills").value
+    .split(",").map(s => s.trim().toLowerCase());
+
+  const res = await fetch("http://localhost:5000/api/jobs/ai-recommend", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ skills })
+  });
+
+  const jobs = await res.json();
+
+  document.getElementById("jobs").innerHTML = jobs.map(j=>`
+    <div>
+      <h3>${j.title}</h3>
+      <button onclick="viewJob('${j._id}')">View</button>
+    </div>
+  `).join("");
+}
+
+function viewJob(id){
+  localStorage.setItem("jobId", id);
+  window.location.href="jobDetails.html";
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
+}
+
+</script>
+
+</body>
+</html>

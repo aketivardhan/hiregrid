@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Recruiter Login</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: Arial;
+  background: linear-gradient(-45deg, #0a66c2, #6a11cb, #2575fc, #00c6ff);
+  background-size: 400% 400%;
+  animation: bg 10s ease infinite;
+}
+
+@keyframes bg {
+  0% {background-position:0%}
+  50% {background-position:100%}
+  100% {background-position:0%}
+}
+
+.navbar {
+  display:flex;
+  justify-content:space-between;
+  padding:12px 20px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+}
+
+.logo { height:40px; }
+
+.container {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:320px;
+  padding:30px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  border-radius:12px;
+  text-align:center;
+  color:white;
+}
+
+a { color: white; }
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+  <a href="register.html">Register</a>
+</div>
+
+<div class="container">
+
+<h2>Recruiter Login</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="loginRecruiter()">Login</button>
+
+</div>
+
+<script>
+
+async function loginRecruiter(){
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) return alert("All fields required");
+
+  const res = await fetch("http://localhost:5000/api/auth/login", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) return alert(data.message);
+  if (data.role !== "recruiter") return alert("Not recruiter");
+
+  localStorage.setItem("email", data.email);
+  localStorage.setItem("role", data.role);
+
+  window.location.href = "dashboard.html";
+}
+
+</script>
+
+</body>
+</html>

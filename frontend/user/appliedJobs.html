@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Applied Jobs</title>
+
+<style>
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f6f8;
+}
+
+/* NAVBAR */
+.navbar {
+  background: #0a66c2;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+}
+
+.navbar a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+}
+
+/* CONTENT */
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <img src="../images/logo.png" class="logo">
+
+  <div>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="jobs.html">Jobs</a>
+    <a href="savedJobs.html">Saved</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+
+<h2>Applied Jobs</h2>
+
+<div id="jobs"></div>
+
+</div>
+
+<script>
+
+const email = localStorage.getItem("email");
+
+if (!email) {
+  window.location.href = "login.html";
+}
+
+async function load(){
+
+  const res = await fetch(`http://localhost:5000/api/jobs/applied/${email}`);
+  const jobs = await res.json();
+
+  const container = document.getElementById("jobs");
+
+  if (jobs.length === 0){
+    container.innerHTML = "No applied jobs";
+    return;
+  }
+
+  container.innerHTML = jobs.map(job => `
+    <div class="card">
+      <h3>${job.title}</h3>
+      <p>${job.company}</p>
+    </div>
+  `).join("");
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+load();
+
+</script>
+
+</body>
+</html>
